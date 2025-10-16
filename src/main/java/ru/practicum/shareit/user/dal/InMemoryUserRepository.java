@@ -1,6 +1,7 @@
 package ru.practicum.shareit.user.dal;
 
 import org.springframework.stereotype.Repository;
+import ru.practicum.shareit.exception.InternalErrorException;
 import ru.practicum.shareit.user.User;
 
 import java.util.HashMap;
@@ -13,7 +14,7 @@ public class InMemoryUserRepository implements UserRepository {
 
     @Override
     public User create(User user) {
-        long id = this.getNextId();
+        long id = ++nextId;
         User newUser = user.toBuilder().id(id).build();
         storage.put(id, newUser);
         return newUser;
@@ -42,15 +43,16 @@ public class InMemoryUserRepository implements UserRepository {
             return updatedUser;
         }
 
-        return null;
+        throw new InternalErrorException("User not found");
     }
 
     @Override
     public void delete(Long id) {
-        storage.remove(id);
-    }
+        if (storage.containsKey(id)) {
+            storage.remove(id);
+            return;
+        }
 
-    private Long getNextId() {
-        return ++this.nextId;
+        throw new InternalErrorException("User not found");
     }
 }

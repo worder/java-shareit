@@ -1,8 +1,9 @@
 package ru.practicum.shareit.user.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exception.BadRequestException;
+import ru.practicum.shareit.exception.ConflictEntity;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.dal.UserRepository;
@@ -12,6 +13,7 @@ import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository repo;
@@ -21,7 +23,9 @@ public class UserServiceImpl implements UserService {
         User user = UserMapper.mapToModel(request);
         this.validateEmail(user);
 
-        return UserMapper.mapToDto(repo.create(user));
+        User createdUser = repo.create(user);
+        log.info("Created user: {} from request: {}", createdUser, request);
+        return UserMapper.mapToDto(createdUser);
     }
 
     @Override
@@ -37,18 +41,29 @@ public class UserServiceImpl implements UserService {
         User updatedUser = UserMapper.updateModelFields(currentUser, request);
         this.validateEmail(updatedUser);
 
-        return UserMapper.mapToDto(repo.update(updatedUser));
+        updatedUser = repo.update(updatedUser);
+        log.info("Updated user: {} from request: {}", updatedUser, request);
+        return UserMapper.mapToDto(updatedUser);
     }
 
     @Override
     public void delete(Long id) {
+        User currentUser = repo.findById(id)
+                .orElseThrow(() -> new NotFoundException("User not found"));
+
         repo.delete(id);
+        log.info("Deleted user: {}", currentUser);
+    }
+
+    @Override
+    public boolean isUserExists(Long id) {
+        return repo.findById(id).isPresent();
     }
 
     private void validateEmail(User user) {
         repo.findByEmail(user.getEmail()).ifPresent(u -> {
             if (!u.getId().equals(user.getId())) {
-                throw new BadRequestException("Email already exists");
+                throw new ConflictEntity("Email already exists");
             }
         });
     }
