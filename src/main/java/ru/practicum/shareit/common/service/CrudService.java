@@ -1,11 +1,11 @@
 package ru.practicum.shareit.common.service;
 
-public interface CrudService<Id, Dto, CreateRequestDto, UpdateRequestDto> {
-    Dto create(CreateRequestDto request);
+public interface CrudService<ID, D, C, U> {
+    D create(C request);
 
-    Dto read(Long id);
+    D read(Long id);
 
-    Dto update(Long id, UpdateRequestDto request);
+    D update(Long id, U request);
 
-    void delete(Id id);
+    void delete(ID id);
 }
