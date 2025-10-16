@@ -9,5 +9,6 @@ import java.util.List;
 
 public interface ItemService extends CrudService<Long, ItemDto, CreateItemRequest, UpdateItemRequest> {
     public List<ItemDto> getUserItems(Long id);
+
     public List<ItemDto> findUserItems(Long id, String text);
 }
