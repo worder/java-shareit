@@ -10,7 +10,7 @@ import java.util.Optional;
 @Repository
 public class InMemoryUserRepository implements UserRepository {
     private final HashMap<Long, User> storage = new HashMap<>();
-    Long nextId = 0L;
+    private Long nextId = 0L;
 
     @Override
     public User create(User user) {
@@ -26,6 +26,11 @@ public class InMemoryUserRepository implements UserRepository {
             return Optional.of(storage.get(id));
         }
         return Optional.empty();
+    }
+
+    @Override
+    public Boolean existsById(Long id) {
+        return storage.containsKey(id);
     }
 
     @Override

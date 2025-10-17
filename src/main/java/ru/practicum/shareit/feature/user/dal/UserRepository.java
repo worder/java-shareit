@@ -7,6 +7,8 @@ import java.util.Optional;
 public interface UserRepository {
     Optional<User> findById(Long id);
 
+    Boolean existsById(Long id);
+
     Optional<User> findByEmail(String email);
 
     User create(User user);

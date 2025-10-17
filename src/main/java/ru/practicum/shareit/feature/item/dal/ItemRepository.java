@@ -8,6 +8,8 @@ import java.util.Optional;
 public interface ItemRepository {
     Optional<Item> findById(Long id);
 
+    Boolean existsById(Long id);
+
     List<Item> findByOwnerId(Long id);
 
     List<Item> findByNameOrDescription(Long ownerId, String text);

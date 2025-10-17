@@ -56,8 +56,11 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public void delete(Long id) {
-        Item currentItem = storage.findById(id).orElseThrow(() -> new NotFoundException("Item not found"));
-        log.info("Deleted item: {}", currentItem);
+        if (!storage.existsById(id)) {
+            throw new NotFoundException("Item not found");
+        }
+
+        log.info("Deleted item: {}", storage.findById(id));
         storage.delete(id);
     }
 

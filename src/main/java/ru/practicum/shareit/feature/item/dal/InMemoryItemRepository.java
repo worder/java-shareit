@@ -23,6 +23,11 @@ public class InMemoryItemRepository implements ItemRepository {
     }
 
     @Override
+    public Boolean existsById(Long id) {
+        return storage.containsKey(id);
+    }
+
+    @Override
     public List<Item> findByOwnerId(Long id) {
         return storage.values().stream()
                 .filter(i -> i.getOwner().equals(id))
