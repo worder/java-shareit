@@ -44,9 +44,11 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto update(Long id, UpdateItemRequest request) {
         Item currentItem = storage.findById(id)
                 .orElseThrow(() -> new NotFoundException("Item not found"));
+
         Item updatedItem = ItemMapper.updateModelFields(currentItem, request);
-        if (!userService.isUserExists(updatedItem.getOwner())) {
-            throw new NotFoundException("Owner not found");
+
+        if (!currentItem.getOwner().equals(updatedItem.getOwner())) {
+            throw new NotFoundException("Invalid owner id");
         }
 
         updatedItem = storage.update(updatedItem);
