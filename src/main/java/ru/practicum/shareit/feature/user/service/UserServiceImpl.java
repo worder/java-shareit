@@ -23,7 +23,7 @@ public class UserServiceImpl implements UserService {
         User user = UserMapper.mapToModel(request);
         this.validateEmail(user);
 
-        User createdUser = storage.create(user);
+        User createdUser = storage.save(user);
         log.info("Created user: {} from request: {}", createdUser, request);
         return UserMapper.mapToDto(createdUser);
     }
@@ -41,7 +41,7 @@ public class UserServiceImpl implements UserService {
         User updatedUser = UserMapper.updateModelFields(currentUser, request);
         this.validateEmail(updatedUser);
 
-        updatedUser = storage.update(updatedUser);
+        updatedUser = storage.save(updatedUser);
         log.info("Updated user: {} from request: {}", updatedUser, request);
         return UserMapper.mapToDto(updatedUser);
     }
@@ -53,7 +53,7 @@ public class UserServiceImpl implements UserService {
         }
 
         log.info("Deleted user: {}", storage.findById(id));
-        storage.delete(id);
+        storage.deleteById(id);
     }
 
     @Override

@@ -28,8 +28,4 @@ public class UpdateItemRequest {
     public boolean hasAvailable() {
         return this.available != null;
     }
-
-    public boolean hasOwner() {
-        return owner != null;
-    }
 }

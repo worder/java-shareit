@@ -13,14 +13,6 @@ public class InMemoryUserRepository implements UserRepository {
     private Long nextId = 0L;
 
     @Override
-    public User create(User user) {
-        long id = ++nextId;
-        User newUser = user.toBuilder().id(id).build();
-        storage.put(id, newUser);
-        return newUser;
-    }
-
-    @Override
     public Optional<User> findById(Long id) {
         if (storage.containsKey(id)) {
             return Optional.of(storage.get(id));
@@ -29,7 +21,7 @@ public class InMemoryUserRepository implements UserRepository {
     }
 
     @Override
-    public Boolean existsById(Long id) {
+    public boolean existsById(Long id) {
         return storage.containsKey(id);
     }
 
@@ -41,18 +33,19 @@ public class InMemoryUserRepository implements UserRepository {
     }
 
     @Override
-    public User update(User user) {
+    public User save(User user) {
         if (storage.containsKey(user.getId())) {
-            User updatedUser = user.toBuilder().build();
-            storage.put(user.getId(), updatedUser);
-            return updatedUser;
+            storage.put(user.getId(), user);
+        } else {
+            long id = ++nextId;
+            user.setId(id);
+            storage.put(id, user);
         }
-
-        throw new InternalErrorException("User not found");
+        return user;
     }
 
     @Override
-    public void delete(Long id) {
+    public void deleteById(Long id) {
         if (storage.containsKey(id)) {
             storage.remove(id);
             return;

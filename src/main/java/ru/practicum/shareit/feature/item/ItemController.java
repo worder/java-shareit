@@ -26,7 +26,7 @@ public class ItemController {
     @PostMapping
     public ItemDto create(@RequestHeader(HEADER_OWNER_ID) Long ownerId,
                           @RequestBody @Valid CreateItemRequest request) {
-        return itemService.create(request.toBuilder().owner(ownerId).build());
+        return itemService.create(request.toBuilder().ownerId(ownerId).build());
     }
 
     @PatchMapping("/{id}")

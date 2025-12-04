@@ -23,7 +23,7 @@ public class InMemoryItemRepository implements ItemRepository {
     }
 
     @Override
-    public Boolean existsById(Long id) {
+    public boolean existsById(Long id) {
         return storage.containsKey(id);
     }
 
@@ -48,26 +48,20 @@ public class InMemoryItemRepository implements ItemRepository {
     }
 
     @Override
-    public Item create(Item item) {
-        Long id = ++lastId;
-        Item newItem = item.toBuilder().id(id).build();
-        storage.put(id, newItem);
-        return newItem;
-    }
-
-    @Override
-    public Item update(Item item) {
+    public Item save(Item item) {
         if (storage.containsKey(item.getId())) {
-            Item updatedItem = item.toBuilder().build();
-            storage.put(item.getId(), updatedItem);
-            return updatedItem;
+            storage.put(item.getId(), item);
+            return item;
+        } else {
+            Long id = ++lastId;
+            item.setId(id);
+            storage.put(id, item);
+            return item;
         }
-
-        throw new InternalErrorException("Item not found");
     }
 
     @Override
-    public void delete(Long id) {
+    public void deleteById(Long id) {
         if (storage.containsKey(id)) {
             storage.remove(id);
             return;

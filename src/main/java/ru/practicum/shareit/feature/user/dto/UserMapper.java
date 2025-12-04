@@ -11,21 +11,21 @@ public class UserMapper {
     }
 
     public static User mapToModel(CreateUserRequest request) {
-        return User.builder()
-                .name(request.getName())
-                .email(request.getEmail()).build();
+        User user = new User();
+        user.setName(request.getName());
+        user.setEmail(request.getEmail());
+        return user;
     }
 
     public static User updateModelFields(User user, UpdateUserRequest request) {
-        User.UserBuilder builder = user.toBuilder();
-
         if (request.hasName()) {
-            builder.name(request.getName());
-        }
-        if (request.hasEmail()) {
-            builder.email(request.getEmail());
+            user.setName(request.getName());
         }
 
-        return builder.build();
+        if (request.hasEmail()) {
+            user.setEmail(request.getEmail());
+        }
+
+        return user;
     }
 }

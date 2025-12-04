@@ -13,33 +13,26 @@ public class ItemMapper {
     }
 
     public static Item mapToModel(CreateItemRequest request) {
-        return Item.builder()
-                .owner(request.getOwner())
-                .name(request.getName())
-                .description(request.getDescription())
-                .available(request.getAvailable())
-                .build();
+        Item item = new Item();
+        item.setName(request.getName());
+        item.setDescription(request.getDescription());
+        item.setAvailable(request.getAvailable());
+        return item;
     }
 
     public static Item updateModelFields(Item item, UpdateItemRequest request) {
-        Item.ItemBuilder builder = item.toBuilder();
-
         if (request.hasName()) {
-            builder.name(request.getName());
+            item.setName(request.getName());
         }
 
         if (request.hasDescription()) {
-            builder.description(request.getDescription());
+            item.setDescription(request.getDescription());
         }
 
         if (request.hasAvailable()) {
-            builder.available(request.getAvailable());
+            item.setAvailable(request.getAvailable());
         }
 
-        if (request.hasOwner()) {
-            builder.owner(request.getOwner());
-        }
-
-        return builder.build();
+        return item;
     }
 }

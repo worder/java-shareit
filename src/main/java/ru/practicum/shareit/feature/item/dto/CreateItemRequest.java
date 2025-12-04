@@ -10,7 +10,7 @@ import lombok.Value;
 @ToString
 @Builder(toBuilder = true)
 public class CreateItemRequest {
-    Long owner;
+    Long ownerId;
 
     @NotBlank
     String name;
