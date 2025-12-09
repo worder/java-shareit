@@ -1,6 +1,6 @@
 package ru.practicum.shareit.feature.user.dal;
 
-import ru.practicum.shareit.feature.user.User;
+import ru.practicum.shareit.feature.user.model.User;
 
 import java.util.Optional;
 

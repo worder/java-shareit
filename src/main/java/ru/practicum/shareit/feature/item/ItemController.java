@@ -3,9 +3,10 @@ package ru.practicum.shareit.feature.item;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.feature.item.dto.CreateItemRequest;
-import ru.practicum.shareit.feature.item.dto.ItemDto;
-import ru.practicum.shareit.feature.item.dto.UpdateItemRequest;
+import ru.practicum.shareit.feature.item.dto.*;
+import ru.practicum.shareit.feature.item.dto.request.CreateCommentRequest;
+import ru.practicum.shareit.feature.item.dto.request.CreateItemRequest;
+import ru.practicum.shareit.feature.item.dto.request.UpdateItemRequest;
 import ru.practicum.shareit.feature.item.service.ItemService;
 
 import java.util.List;
@@ -16,39 +17,48 @@ import java.util.List;
 public class ItemController {
     private final ItemService itemService;
 
-    private static final String HEADER_OWNER_ID = "X-Sharer-User-Id";
+    private static final String HEADER_USER_ID = "X-Sharer-User-Id";
 
     @GetMapping
-    public List<ItemDto> getUserItems(@RequestHeader(HEADER_OWNER_ID) Long ownerId) {
-        return itemService.getUserItems(ownerId);
+    public List<ItemDetailsDto> getUserItems(@RequestHeader(HEADER_USER_ID) Long userId) {
+        return itemService.getUserItems(userId);
     }
 
     @PostMapping
-    public ItemDto create(@RequestHeader(HEADER_OWNER_ID) Long ownerId,
+    public ItemDto create(@RequestHeader(HEADER_USER_ID) Long userId,
                           @RequestBody @Valid CreateItemRequest request) {
-        return itemService.create(request.toBuilder().ownerId(ownerId).build());
+        return itemService.create(userId, request);
     }
 
-    @PatchMapping("/{id}")
-    public ItemDto update(@RequestHeader(HEADER_OWNER_ID) Long ownerId,
-                          @PathVariable Long id,
+    @PatchMapping("/{itemId}")
+    public ItemDto update(@RequestHeader(HEADER_USER_ID) Long userId,
+                          @PathVariable Long itemId,
                           @RequestBody @Valid UpdateItemRequest request) {
-        return itemService.update(id, request.toBuilder().owner(ownerId).build());
+        return itemService.update(userId, itemId, request);
     }
 
-    @GetMapping("/{id}")
-    public ItemDto get(@PathVariable Long id) {
-        return itemService.read(id);
+    @GetMapping("/{itemId}")
+    public ItemDetailsDto get(@RequestHeader(HEADER_USER_ID) Long userId,
+                              @PathVariable Long itemId) {
+        return itemService.findById(userId, itemId);
     }
 
-    @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
-        itemService.delete(id);
+    @DeleteMapping("/{itemId}")
+    public void delete(@RequestHeader(HEADER_USER_ID) Long userId,
+                       @PathVariable Long itemId) {
+        itemService.delete(userId, itemId);
     }
 
     @GetMapping("/search")
-    public List<ItemDto> search(@RequestHeader(HEADER_OWNER_ID) Long ownerId,
+    public List<ItemDto> search(@RequestHeader(HEADER_USER_ID) Long userId,
                                 @RequestParam String text) {
-        return itemService.findUserItems(ownerId, text);
+        return itemService.findUserItems(userId, text);
+    }
+
+    @PostMapping("/{itemId}/comment")
+    public CommentDto createComment(@RequestHeader(HEADER_USER_ID) Long authorId,
+                                    @PathVariable Long itemId,
+                                    @RequestBody @Valid CreateCommentRequest request) {
+        return itemService.createComment(authorId, itemId, request);
     }
 }

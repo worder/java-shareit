@@ -3,9 +3,8 @@ package ru.practicum.shareit.feature.booking.dal;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import ru.practicum.shareit.feature.booking.Booking;
+import ru.practicum.shareit.feature.booking.model.Booking;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,7 +42,7 @@ public interface DatabaseBookingRepository extends BookingRepository, JpaReposit
             SELECT b
             FROM Booking b
             WHERE b.booker.id = ?1 AND b.status = ?2
-                AND (b.startDate <= CURRENT_DATE AND b.endDate >= CURRENT_DATE)
+                AND (b.startDate <= CURRENT_TIMESTAMP AND b.endDate >= CURRENT_TIMESTAMP)
             ORDER BY b.startDate DESC
             """)
     List<Booking> findByBookerIdAndStatusInPresent(Long bookerId, Booking.Status status);
@@ -53,7 +52,7 @@ public interface DatabaseBookingRepository extends BookingRepository, JpaReposit
             SELECT b
             FROM Booking b
             WHERE b.booker.id = ?1 AND b.status = ?2
-                AND b.startDate > CURRENT_DATE
+                AND b.startDate > CURRENT_TIMESTAMP
             ORDER BY b.startDate DESC
             """)
     List<Booking> findByBookerIdAndStatusInFuture(Long ownerId, Booking.Status status);
@@ -63,7 +62,7 @@ public interface DatabaseBookingRepository extends BookingRepository, JpaReposit
             SELECT b
             FROM Booking b
             WHERE b.booker.id = ?1 AND b.status = ?2
-                AND b.endDate < CURRENT_DATE
+                AND b.endDate < CURRENT_TIMESTAMP
             ORDER BY b.startDate DESC
             """)
     List<Booking> findByBookerIdAndStatusInPast(Long ownerId, Booking.Status status);
@@ -91,7 +90,7 @@ public interface DatabaseBookingRepository extends BookingRepository, JpaReposit
             SELECT b
             FROM Booking b
             WHERE b.item.owner.id = ?1 AND b.status = ?2
-                AND (b.startDate <= CURRENT_DATE AND b.endDate >= CURRENT_DATE)
+                AND (b.startDate <= CURRENT_TIMESTAMP AND b.endDate >= CURRENT_TIMESTAMP)
             ORDER BY b.startDate DESC
             """)
     List<Booking> findByItemOwnerIdAndStatusInPresent(Long ownerId, Booking.Status status);
@@ -101,7 +100,7 @@ public interface DatabaseBookingRepository extends BookingRepository, JpaReposit
             SELECT b
             FROM Booking b
             WHERE b.item.owner.id = ?1 AND b.status = ?2
-                AND b.startDate > CURRENT_DATE
+                AND b.startDate > CURRENT_TIMESTAMP
             ORDER BY b.startDate DESC
             """)
     List<Booking> findByItemOwnerIdAndStatusInFuture(Long ownerId, Booking.Status status);
@@ -111,7 +110,44 @@ public interface DatabaseBookingRepository extends BookingRepository, JpaReposit
             SELECT b
             FROM Booking b
             WHERE b.item.owner.id = ?1 AND b.status = ?2
-                AND b.endDate < CURRENT_DATE
+                AND b.endDate < CURRENT_TIMESTAMP
             """)
     List<Booking> findByItemOwnerIdAndStatusInPast(Long ownerId, Booking.Status status);
+
+    @Override
+    @Query("""
+            SELECT b
+            FROM Booking b
+            WHERE b.item.id = ?1
+                AND b.booker.id = ?2
+                AND b.status = ?3
+                AND b.endDate < CURRENT_TIMESTAMP
+            ORDER BY endDate DESC
+            LIMIT 1
+            """)
+    Optional<Booking> findPastBookingByItemIdAndBookerIdAndStatus(Long itemId, Long bookerId, Booking.Status status);
+
+    @Override
+    @Query("""
+            SELECT b
+            FROM Booking b
+            WHERE b.item.id = ?1
+                AND b.status = ?2
+                AND b.endDate < CURRENT_TIMESTAMP
+            ORDER BY b.endDate DESC
+            LIMIT 1
+            """)
+    Optional<Booking> findLastBookingByItemId(Long itemId, Booking.Status status);
+
+    @Override
+    @Query("""
+            SELECT b
+            FROM Booking b
+            WHERE b.item.id = ?1
+                AND b.status = ?2
+                AND b.startDate > CURRENT_TIMESTAMP
+            ORDER BY b.startDate ASC
+            LIMIT 1
+            """)
+    Optional<Booking> findNextBookingForItemId(Long itemId, Booking.Status status);
 }

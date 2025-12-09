@@ -5,10 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.common.exception.ConflictEntity;
 import ru.practicum.shareit.common.exception.NotFoundException;
-import ru.practicum.shareit.feature.user.User;
+import ru.practicum.shareit.feature.user.model.User;
 import ru.practicum.shareit.feature.user.dal.UserRepository;
-import ru.practicum.shareit.feature.user.dto.CreateUserRequest;
-import ru.practicum.shareit.feature.user.dto.UpdateUserRequest;
+import ru.practicum.shareit.feature.user.dto.request.CreateUserRequest;
+import ru.practicum.shareit.feature.user.dto.request.UpdateUserRequest;
 import ru.practicum.shareit.feature.user.dto.UserDto;
 import ru.practicum.shareit.feature.user.dto.UserMapper;
 
@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto read(Long id) {
+    public UserDto findById(Long id) {
         return storage.findById(id)
                 .map(UserMapper::mapToDto)
                 .orElseThrow(() -> new NotFoundException("User not found"));

@@ -2,7 +2,7 @@ package ru.practicum.shareit.feature.item.dal;
 
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.common.exception.InternalErrorException;
-import ru.practicum.shareit.feature.item.Item;
+import ru.practicum.shareit.feature.item.model.Item;
 
 import java.util.HashMap;
 import java.util.List;

@@ -1,6 +1,6 @@
 package ru.practicum.shareit.feature.item.dal;
 
-import ru.practicum.shareit.feature.item.Item;
+import ru.practicum.shareit.feature.item.model.Item;
 
 import java.util.List;
 import java.util.Optional;

@@ -1,10 +1,10 @@
-package ru.practicum.shareit.feature.item;
+package ru.practicum.shareit.feature.item.model;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import ru.practicum.shareit.feature.user.User;
+import ru.practicum.shareit.feature.user.model.User;
 
 @Getter
 @Setter

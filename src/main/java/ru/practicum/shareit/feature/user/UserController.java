@@ -3,8 +3,8 @@ package ru.practicum.shareit.feature.user;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.feature.user.dto.CreateUserRequest;
-import ru.practicum.shareit.feature.user.dto.UpdateUserRequest;
+import ru.practicum.shareit.feature.user.dto.request.CreateUserRequest;
+import ru.practicum.shareit.feature.user.dto.request.UpdateUserRequest;
 import ru.practicum.shareit.feature.user.dto.UserDto;
 import ru.practicum.shareit.feature.user.service.UserService;
 
@@ -21,7 +21,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     public UserDto get(@PathVariable Long id) {
-        return userService.read(id);
+        return userService.findById(id);
     }
 
     @PatchMapping("/{id}")

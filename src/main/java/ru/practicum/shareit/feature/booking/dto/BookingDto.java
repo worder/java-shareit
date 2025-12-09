@@ -3,7 +3,7 @@ package ru.practicum.shareit.feature.booking.dto;
 import lombok.Builder;
 import lombok.ToString;
 import lombok.Value;
-import ru.practicum.shareit.feature.booking.Booking;
+import ru.practicum.shareit.feature.booking.model.Booking;
 import ru.practicum.shareit.feature.item.dto.ItemDto;
 import ru.practicum.shareit.feature.user.dto.UserDto;
 

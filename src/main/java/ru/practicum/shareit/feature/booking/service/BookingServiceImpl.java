@@ -1,24 +1,26 @@
 package ru.practicum.shareit.feature.booking.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.common.exception.BadRequestException;
 import ru.practicum.shareit.common.exception.NotFoundException;
-import ru.practicum.shareit.feature.booking.Booking;
 import ru.practicum.shareit.feature.booking.BookingState;
 import ru.practicum.shareit.feature.booking.dal.BookingRepository;
 import ru.practicum.shareit.feature.booking.dto.BookingDto;
 import ru.practicum.shareit.feature.booking.dto.BookingMapper;
-import ru.practicum.shareit.feature.booking.dto.CreateBookingRequest;
-import ru.practicum.shareit.feature.item.Item;
+import ru.practicum.shareit.feature.booking.dto.request.CreateBookingRequest;
+import ru.practicum.shareit.feature.booking.model.Booking;
 import ru.practicum.shareit.feature.item.dal.ItemRepository;
-import ru.practicum.shareit.feature.user.User;
+import ru.practicum.shareit.feature.item.model.Item;
 import ru.practicum.shareit.feature.user.dal.UserRepository;
+import ru.practicum.shareit.feature.user.model.User;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class BookingServiceImpl implements BookingService {
     private final UserRepository userStorage;
@@ -48,6 +50,7 @@ public class BookingServiceImpl implements BookingService {
         }
 
         booking = bookingStorage.save(booking);
+        log.info("Created booking: {} from request: {}", booking, request);
         return BookingMapper.mapToDto(booking);
     }
 
@@ -76,31 +79,42 @@ public class BookingServiceImpl implements BookingService {
             throw new BadRequestException("Incorrect owner id");
         }
 
+        log.info("Update booking: {} set status: {}", booking, status);
         booking.setStatus(status);
         return BookingMapper.mapToDto(bookingStorage.save(booking));
     }
 
     @Override
     public List<BookingDto> findByBooker(Long bookerId, BookingState state) {
-        return (switch (state) {
-            case CURRENT -> bookingStorage.findByBookerIdAndStatusInPresent(bookerId, Booking.Status.APPROVED);
-            case PAST -> bookingStorage.findByBookerIdAndStatusInPast(bookerId, Booking.Status.APPROVED);
-            case FUTURE -> bookingStorage.findByBookerIdAndStatusInFuture(bookerId, Booking.Status.APPROVED);
-            case WAITING -> bookingStorage.findByBookerAndStatus(bookerId, Booking.Status.WAITING);
-            case REJECTED -> bookingStorage.findByBookerAndStatus(bookerId, Booking.Status.REJECTED);
-            case null, default -> bookingStorage.findByBookerId(bookerId);
-        }).stream().map(BookingMapper::mapToDto).toList();
+        if (!userStorage.existsById(bookerId)) {
+            throw new NotFoundException("User not found");
+        }
+        return (
+            switch (state) {
+                case CURRENT -> bookingStorage.findByBookerIdAndStatusInPresent(bookerId, Booking.Status.APPROVED);
+                case PAST -> bookingStorage.findByBookerIdAndStatusInPast(bookerId, Booking.Status.APPROVED);
+                case FUTURE -> bookingStorage.findByBookerIdAndStatusInFuture(bookerId, Booking.Status.APPROVED);
+                case WAITING -> bookingStorage.findByBookerAndStatus(bookerId, Booking.Status.WAITING);
+                case REJECTED -> bookingStorage.findByBookerAndStatus(bookerId, Booking.Status.REJECTED);
+                case null, default -> bookingStorage.findByBookerId(bookerId);
+            }
+        ).stream().map(BookingMapper::mapToDto).toList();
     }
 
     @Override
     public List<BookingDto> findByOwner(Long ownerId, BookingState state) {
-        return (switch (state) {
-            case CURRENT -> bookingStorage.findByItemOwnerIdAndStatusInPresent(ownerId, Booking.Status.APPROVED);
-            case PAST -> bookingStorage.findByItemOwnerIdAndStatusInPast(ownerId, Booking.Status.APPROVED);
-            case FUTURE -> bookingStorage.findByItemOwnerIdAndStatusInFuture(ownerId, Booking.Status.APPROVED);
-            case WAITING -> bookingStorage.findByItemOwnerIdAndStatus(ownerId, Booking.Status.WAITING);
-            case REJECTED -> bookingStorage.findByItemOwnerIdAndStatus(ownerId, Booking.Status.REJECTED);
-            case null, default -> bookingStorage.findByItemOwnerId(ownerId);
-        }).stream().map(BookingMapper::mapToDto).toList();
+        if (!userStorage.existsById(ownerId)) {
+            throw new NotFoundException("User not found");
+        }
+        return (
+            switch (state) {
+                case CURRENT -> bookingStorage.findByItemOwnerIdAndStatusInPresent(ownerId, Booking.Status.APPROVED);
+                case PAST -> bookingStorage.findByItemOwnerIdAndStatusInPast(ownerId, Booking.Status.APPROVED);
+                case FUTURE -> bookingStorage.findByItemOwnerIdAndStatusInFuture(ownerId, Booking.Status.APPROVED);
+                case WAITING -> bookingStorage.findByItemOwnerIdAndStatus(ownerId, Booking.Status.WAITING);
+                case REJECTED -> bookingStorage.findByItemOwnerIdAndStatus(ownerId, Booking.Status.REJECTED);
+                case null, default -> bookingStorage.findByItemOwnerId(ownerId);
+            }
+        ).stream().map(BookingMapper::mapToDto).toList();
     }
 }

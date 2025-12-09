@@ -1,4 +1,4 @@
-package ru.practicum.shareit.feature.item.dto;
+package ru.practicum.shareit.feature.item.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -8,10 +8,8 @@ import lombok.Value;
 
 @Value
 @ToString
-@Builder(toBuilder = true)
+@Builder
 public class CreateItemRequest {
-    Long ownerId;
-
     @NotBlank
     String name;
 

@@ -1,4 +1,4 @@
-package ru.practicum.shareit.feature.booking.dto;
+package ru.practicum.shareit.feature.booking.dto.request;
 
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.FutureOrPresent;
@@ -19,10 +19,10 @@ public class CreateBookingRequest {
     Long itemId;
 
     @NotNull
-    @FutureOrPresent
+    @FutureOrPresent(message = "Start date should be in in future or present")
     LocalDateTime start;
 
     @NotNull
-    @Future
+    @Future(message = "End date should be in future")
     LocalDateTime end;
 }
