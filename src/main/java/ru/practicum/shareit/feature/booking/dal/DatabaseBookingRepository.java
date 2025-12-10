@@ -2,7 +2,6 @@ package ru.practicum.shareit.feature.booking.dal;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.feature.booking.model.Booking;
 
@@ -18,8 +17,7 @@ public interface DatabaseBookingRepository extends BookingRepository, JpaReposit
             WHERE b.id = :bookingId
                 AND (b.booker.id = :userId OR b.item.owner.id = :userId)
             """)
-    Optional<Booking> findByIdAndBookerIdOrOwnerId(@Param("bookingId") Long bookingId,
-                                                   @Param("userId") Long userId);
+    Optional<Booking> findByIdAndBookerIdOrOwnerId(Long bookingId, Long userId);
 
     @Override
     @Query("""
@@ -28,7 +26,7 @@ public interface DatabaseBookingRepository extends BookingRepository, JpaReposit
             WHERE b.booker.id = :bookerId
             ORDER BY b.startDate DESC
             """)
-    List<Booking> findByBookerId(@Param("bookerId") Long bookerId);
+    List<Booking> findByBookerId(Long bookerId);
 
     @Override
     @Query("""
@@ -37,8 +35,7 @@ public interface DatabaseBookingRepository extends BookingRepository, JpaReposit
             WHERE b.booker.id = :bookerId AND b.status = :status
             ORDER BY b.startDate DESC
             """)
-    List<Booking> findByBookerAndStatus(@Param("bookerId") Long bookerId,
-                                        @Param("status") Booking.Status status);
+    List<Booking> findByBookerAndStatus(Long bookerId, Booking.Status status);
 
     @Override
     @Query("""
@@ -48,8 +45,7 @@ public interface DatabaseBookingRepository extends BookingRepository, JpaReposit
                 AND (b.startDate <= CURRENT_TIMESTAMP AND b.endDate >= CURRENT_TIMESTAMP)
             ORDER BY b.startDate DESC
             """)
-    List<Booking> findByBookerIdAndStatusInPresent(@Param("bookerId") Long bookerId,
-                                                   @Param("status") Booking.Status status);
+    List<Booking> findByBookerIdAndStatusInPresent(Long bookerId, Booking.Status status);
 
     @Override
     @Query("""
@@ -59,8 +55,7 @@ public interface DatabaseBookingRepository extends BookingRepository, JpaReposit
                 AND b.startDate > CURRENT_TIMESTAMP
             ORDER BY b.startDate DESC
             """)
-    List<Booking> findByBookerIdAndStatusInFuture(@Param("bookerId") Long bookerId,
-                                                  @Param("status") Booking.Status status);
+    List<Booking> findByBookerIdAndStatusInFuture(Long bookerId, Booking.Status status);
 
     @Override
     @Query("""
@@ -70,8 +65,7 @@ public interface DatabaseBookingRepository extends BookingRepository, JpaReposit
                 AND b.endDate < CURRENT_TIMESTAMP
             ORDER BY b.startDate DESC
             """)
-    List<Booking> findByBookerIdAndStatusInPast(@Param("bookerId") Long bookerId,
-                                                @Param("status") Booking.Status status);
+    List<Booking> findByBookerIdAndStatusInPast(Long bookerId, Booking.Status status);
 
     @Override
     @Query("""
@@ -80,7 +74,7 @@ public interface DatabaseBookingRepository extends BookingRepository, JpaReposit
             WHERE b.item.owner.id = :ownerId
             ORDER BY b.startDate DESC
             """)
-    List<Booking> findByItemOwnerId(@Param("ownerId") Long ownerId);
+    List<Booking> findByItemOwnerId(Long ownerId);
 
     @Override
     @Query("""
@@ -89,8 +83,7 @@ public interface DatabaseBookingRepository extends BookingRepository, JpaReposit
             WHERE b.item.owner.id = :ownerId AND b.status = :status
             ORDER BY b.startDate DESC
             """)
-    List<Booking> findByItemOwnerIdAndStatus(@Param("ownerId") Long ownerId,
-                                             @Param("status") Booking.Status status);
+    List<Booking> findByItemOwnerIdAndStatus(Long ownerId, Booking.Status status);
 
     @Override
     @Query("""
@@ -100,8 +93,7 @@ public interface DatabaseBookingRepository extends BookingRepository, JpaReposit
                 AND (b.startDate <= CURRENT_TIMESTAMP AND b.endDate >= CURRENT_TIMESTAMP)
             ORDER BY b.startDate DESC
             """)
-    List<Booking> findByItemOwnerIdAndStatusInPresent(@Param("ownerId") Long ownerId,
-                                                      @Param("status") Booking.Status status);
+    List<Booking> findByItemOwnerIdAndStatusInPresent(Long ownerId, Booking.Status status);
 
     @Override
     @Query("""
@@ -111,8 +103,7 @@ public interface DatabaseBookingRepository extends BookingRepository, JpaReposit
                 AND b.startDate > CURRENT_TIMESTAMP
             ORDER BY b.startDate DESC
             """)
-    List<Booking> findByItemOwnerIdAndStatusInFuture(@Param("ownerId") Long ownerId,
-                                                     @Param("status") Booking.Status status);
+    List<Booking> findByItemOwnerIdAndStatusInFuture(Long ownerId, Booking.Status status);
 
     @Override
     @Query("""
@@ -121,8 +112,7 @@ public interface DatabaseBookingRepository extends BookingRepository, JpaReposit
             WHERE b.item.owner.id = :ownerId AND b.status = :status
                 AND b.endDate < CURRENT_TIMESTAMP
             """)
-    List<Booking> findByItemOwnerIdAndStatusInPast(@Param("ownerId") Long ownerId,
-                                                   @Param("status") Booking.Status status);
+    List<Booking> findByItemOwnerIdAndStatusInPast(Long ownerId, Booking.Status status);
 
     @Override
     @Query("""
@@ -135,9 +125,7 @@ public interface DatabaseBookingRepository extends BookingRepository, JpaReposit
             ORDER BY endDate DESC
             LIMIT 1
             """)
-    Optional<Booking> findPastBookingByItemIdAndBookerIdAndStatus(@Param("itemId") Long itemId,
-                                                                  @Param("bookerId") Long bookerId,
-                                                                  @Param("status") Booking.Status status);
+    Optional<Booking> findPastBookingByItemIdAndBookerIdAndStatus(Long itemId, Long bookerId, Booking.Status status);
 
     @Override
     @Query("""
@@ -149,8 +137,7 @@ public interface DatabaseBookingRepository extends BookingRepository, JpaReposit
             ORDER BY b.endDate DESC
             LIMIT 1
             """)
-    Optional<Booking> findLastBookingByItemId(@Param("itemId") Long itemId,
-                                              @Param("status") Booking.Status status);
+    Optional<Booking> findLastBookingByItemId(Long itemId, Booking.Status status);
 
     @Override
     @Query("""
@@ -162,6 +149,5 @@ public interface DatabaseBookingRepository extends BookingRepository, JpaReposit
             ORDER BY b.startDate ASC
             LIMIT 1
             """)
-    Optional<Booking> findNextBookingForItemId(@Param("itemId") Long itemId,
-                                               @Param("status") Booking.Status status);
+    Optional<Booking> findNextBookingForItemId(Long itemId, Booking.Status status);
 }
