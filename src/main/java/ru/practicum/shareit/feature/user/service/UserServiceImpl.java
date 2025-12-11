@@ -5,10 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.common.exception.ConflictEntity;
 import ru.practicum.shareit.common.exception.NotFoundException;
-import ru.practicum.shareit.feature.user.User;
+import ru.practicum.shareit.feature.user.model.User;
 import ru.practicum.shareit.feature.user.dal.UserRepository;
-import ru.practicum.shareit.feature.user.dto.CreateUserRequest;
-import ru.practicum.shareit.feature.user.dto.UpdateUserRequest;
+import ru.practicum.shareit.feature.user.dto.request.CreateUserRequest;
+import ru.practicum.shareit.feature.user.dto.request.UpdateUserRequest;
 import ru.practicum.shareit.feature.user.dto.UserDto;
 import ru.practicum.shareit.feature.user.dto.UserMapper;
 
@@ -23,13 +23,13 @@ public class UserServiceImpl implements UserService {
         User user = UserMapper.mapToModel(request);
         this.validateEmail(user);
 
-        User createdUser = storage.create(user);
+        User createdUser = storage.save(user);
         log.info("Created user: {} from request: {}", createdUser, request);
         return UserMapper.mapToDto(createdUser);
     }
 
     @Override
-    public UserDto read(Long id) {
+    public UserDto findById(Long id) {
         return storage.findById(id)
                 .map(UserMapper::mapToDto)
                 .orElseThrow(() -> new NotFoundException("User not found"));
@@ -41,7 +41,7 @@ public class UserServiceImpl implements UserService {
         User updatedUser = UserMapper.updateModelFields(currentUser, request);
         this.validateEmail(updatedUser);
 
-        updatedUser = storage.update(updatedUser);
+        updatedUser = storage.save(updatedUser);
         log.info("Updated user: {} from request: {}", updatedUser, request);
         return UserMapper.mapToDto(updatedUser);
     }
@@ -53,7 +53,7 @@ public class UserServiceImpl implements UserService {
         }
 
         log.info("Deleted user: {}", storage.findById(id));
-        storage.delete(id);
+        storage.deleteById(id);
     }
 
     @Override

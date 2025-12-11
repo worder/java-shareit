@@ -1,15 +1,11 @@
-package ru.practicum.shareit.feature.item.dto;
+package ru.practicum.shareit.feature.item.dto.request;
 
-import lombok.Builder;
 import lombok.ToString;
 import lombok.Value;
 
 @Value
 @ToString
-@Builder(toBuilder = true)
 public class UpdateItemRequest {
-    Long owner;
-
     String name;
 
     String description;
@@ -27,9 +23,5 @@ public class UpdateItemRequest {
 
     public boolean hasAvailable() {
         return this.available != null;
-    }
-
-    public boolean hasOwner() {
-        return owner != null;
     }
 }
