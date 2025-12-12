@@ -15,6 +15,7 @@ import ru.practicum.shareit.feature.item.model.Item;
 import ru.practicum.shareit.feature.item.dal.CommentRepository;
 import ru.practicum.shareit.feature.item.dal.ItemRepository;
 import ru.practicum.shareit.feature.item.dto.*;
+import ru.practicum.shareit.feature.request.dal.ItemRequestRepository;
 import ru.practicum.shareit.feature.user.model.User;
 import ru.practicum.shareit.feature.user.dal.UserRepository;
 
@@ -29,6 +30,7 @@ public class ItemServiceImpl implements ItemService {
     private final UserRepository userStorage;
     private final CommentRepository commentStorage;
     private final BookingRepository bookingStorage;
+    private final ItemRequestRepository itemRequestStorage;
 
     @Override
     public ItemDto create(Long userId, CreateItemRequest request) {
@@ -36,6 +38,11 @@ public class ItemServiceImpl implements ItemService {
 
         item.setOwner(userStorage.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Owner Not Found")));
+
+        if (request.getRequestId() != null) {
+            itemRequestStorage.findById(request.getRequestId())
+                    .orElseThrow(() -> new NotFoundException("Request not found"));
+        }
 
         Item createdItem = itemStorage.save(item);
         log.info("Created item: {} from request: {}", createdItem, request);

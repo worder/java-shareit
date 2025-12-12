@@ -17,4 +17,6 @@ public interface ItemRepository {
     Item save(Item item);
 
     void deleteById(Long id);
+
+    List<Item> findByRequestId(Long requestId);
 }

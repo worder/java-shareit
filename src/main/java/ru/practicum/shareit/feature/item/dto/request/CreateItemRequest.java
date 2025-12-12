@@ -18,4 +18,6 @@ public class CreateItemRequest {
 
     @NotNull
     Boolean available;
+
+    Long requestId;
 }
