@@ -58,8 +58,21 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public List<ItemRequestDtoWithItems> findAllByRequesterId(Long requesterId) {
-        return itemRequestStorage.findByRequesterIdOrderByCreated(requesterId).stream()
-                .map(r -> ItemRequestMapper.mapToDtoWithItems(r, itemStorage.findByRequestId(r.getId())))
+        List<ItemRequest> allRequests = itemRequestStorage.findByRequesterIdOrderByCreated(requesterId);
+
+        List<Long> requestIds = allRequests.stream()
+                .map(ItemRequest::getId)
+                .toList();
+
+        List<Item> requestedItems = itemStorage.findByRequestIdIn(requestIds);
+
+        return allRequests.stream()
+                .map(r -> {
+                    List<Item> requestItems = requestedItems.stream()
+                            .filter(i -> i.getRequestId().equals(r.getId()))
+                            .toList();
+                    return ItemRequestMapper.mapToDtoWithItems(r, requestItems);
+                })
                 .toList();
     }
 }
