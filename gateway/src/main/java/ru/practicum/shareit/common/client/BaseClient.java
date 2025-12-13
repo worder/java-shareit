@@ -1,4 +1,4 @@
-package ru.practicum.shareit.client;
+package ru.practicum.shareit.common.client;
 
 import java.util.List;
 import java.util.Map;
@@ -90,7 +90,16 @@ public class BaseClient {
                 shareitServerResponse = rest.exchange(path, method, requestEntity, Object.class);
             }
         } catch (HttpStatusCodeException e) {
-            return ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsByteArray());
+            HttpHeaders headers = new HttpHeaders();
+            HttpHeaders responseHeaders = e.getResponseHeaders();
+            if (responseHeaders != null && responseHeaders.getContentType() != null) {
+                headers.setContentType(responseHeaders.getContentType());
+            }
+
+            return ResponseEntity
+                    .status(e.getStatusCode())
+                    .headers(headers)
+                    .body(e.getResponseBodyAsByteArray());
         }
         return prepareGatewayResponse(shareitServerResponse);
     }

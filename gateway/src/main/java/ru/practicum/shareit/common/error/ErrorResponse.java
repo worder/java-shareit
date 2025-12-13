@@ -1,5 +1,6 @@
 package ru.practicum.shareit.common.error;
 
+import lombok.Data;
 import lombok.Value;
 
 @Value
