@@ -1,5 +1,6 @@
 package ru.practicum.shareit.feature.request.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Value;
 import ru.practicum.shareit.feature.user.dto.UserDto;
@@ -7,6 +8,7 @@ import ru.practicum.shareit.feature.user.dto.UserDto;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@AllArgsConstructor
 @Value
 @Builder
 public class ItemRequestDtoWithItems {

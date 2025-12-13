@@ -139,6 +139,22 @@ public class ItemServiceImplTest {
     }
 
     @Test
+    void update_UpdatesItem_Partially() {
+        UserDto owner = userService.create(userRequest);
+        ItemDto item = itemService.create(owner.getId(), itemRequest);
+
+        itemService.update(owner.getId(), item.getId(), new UpdateItemRequest("new_name", null, null));
+        itemService.update(owner.getId(), item.getId(), new UpdateItemRequest(null, "new_desc", null));
+        itemService.update(owner.getId(), item.getId(), new UpdateItemRequest(null, null, !itemRequest.getAvailable()));
+
+        ItemDetailsDto result = itemService.findById(owner.getId(), item.getId());
+
+        assertEquals("new_name", result.getName());
+        assertEquals("new_desc", result.getDescription());
+        assertEquals(!itemRequest.getAvailable(), result.getAvailable());
+    }
+
+    @Test
     void update_ThrowsException_WrongOwner() {
         UserDto owner = userService.create(userRequest);
         ItemDto item = itemService.create(owner.getId(), itemRequest);

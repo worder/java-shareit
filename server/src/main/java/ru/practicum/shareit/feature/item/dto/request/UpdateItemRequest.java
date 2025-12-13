@@ -1,10 +1,14 @@
 package ru.practicum.shareit.feature.item.dto.request;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.ToString;
 import lombok.Value;
 
+@AllArgsConstructor
 @Value
 @ToString
+@Builder
 public class UpdateItemRequest {
     String name;
 

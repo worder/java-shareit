@@ -5,14 +5,14 @@ import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import ru.practicum.shareit.common.exception.NotFoundException;
 import ru.practicum.shareit.feature.request.dto.CreateItemRequestDto;
 import ru.practicum.shareit.feature.request.dto.ItemRequestDto;
 import ru.practicum.shareit.feature.user.dto.UserDto;
 import ru.practicum.shareit.feature.user.dto.request.CreateUserRequest;
 import ru.practicum.shareit.feature.user.service.UserService;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
@@ -35,6 +35,11 @@ public class ItemRequestServiceImplTest {
         ItemRequestDto result = itemRequestService.create(user.getId(), requestDto);
 
         assertNotNull(result.getId());
+    }
+
+    @Test
+    void create_ThrowsException_WrongUser() {
+        assertThrows(NotFoundException.class, () -> itemRequestService.create(999L, requestDto));
     }
 
     @Test
