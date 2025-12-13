@@ -7,7 +7,7 @@ import ru.practicum.shareit.feature.booking.dto.request.CreateBookingRequest;
 import java.util.List;
 
 public interface BookingService {
-    BookingDto create(CreateBookingRequest request);
+    BookingDto create(Long bookerId, CreateBookingRequest request);
 
     BookingDto approve(Long bookingId, Long ownerId);
 

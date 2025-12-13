@@ -95,9 +95,9 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> findUserItems(Long id, String text) {
+    public List<ItemDto> findUserItems(Long ownerId, String text) {
         if (!text.isBlank()) {
-            return itemStorage.findByNameOrDescription(id, text).stream()
+            return itemStorage.findByNameOrDescription(ownerId, text).stream()
                     .map(ItemMapper::mapToDto)
                     .toList();
         }

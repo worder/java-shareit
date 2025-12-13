@@ -21,7 +21,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto create(CreateUserRequest request) {
         User user = UserMapper.mapToModel(request);
-        this.validateEmail(user);
+
+        storage.findByEmail(user.getEmail()).ifPresent(u -> {
+            throw new ConflictEntity("Email already exists");
+        });
 
         User createdUser = storage.save(user);
         log.info("Created user: {} from request: {}", createdUser, request);
@@ -37,10 +40,19 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto update(Long id, UpdateUserRequest request) {
-        User currentUser = storage.findById(id).orElseThrow(() -> new NotFoundException("User not found"));
-        User updatedUser = UserMapper.updateModelFields(currentUser, request);
-        this.validateEmail(updatedUser);
+        User currentUser = storage.findById(id)
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
+        User updatedUser = UserMapper.updateModelFields(currentUser, request);
+        if (request.hasEmail()) {
+            storage.findByEmail(request.getEmail()).ifPresent(u -> {
+                if (!u.getId().equals(currentUser.getId())) {
+                    throw new ConflictEntity("Email already exists");
+                }
+            });
+        }
+
+        log.info("Prepare update user: {} from request: {}", updatedUser, request);
         updatedUser = storage.save(updatedUser);
         log.info("Updated user: {} from request: {}", updatedUser, request);
         return UserMapper.mapToDto(updatedUser);
@@ -59,13 +71,5 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean isUserExists(Long id) {
         return storage.findById(id).isPresent();
-    }
-
-    private void validateEmail(User user) {
-        storage.findByEmail(user.getEmail()).ifPresent(u -> {
-            if (!u.getId().equals(user.getId())) {
-                throw new ConflictEntity("Email already exists");
-            }
-        });
     }
 }

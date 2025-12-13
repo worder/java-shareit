@@ -20,14 +20,16 @@ public class UserMapper {
     }
 
     public static User updateModelFields(User user, UpdateUserRequest request) {
+        User.UserBuilder u = user.toBuilder();
+
         if (request.hasName()) {
-            user.setName(request.getName());
+            u.name(request.getName());
         }
 
         if (request.hasEmail()) {
-            user.setEmail(request.getEmail());
+            u.email(request.getEmail());
         }
 
-        return user;
+        return u.build();
     }
 }

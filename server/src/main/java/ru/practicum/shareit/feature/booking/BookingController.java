@@ -19,7 +19,7 @@ public class BookingController {
     @PostMapping
     public BookingDto create(@RequestHeader(HEADER_USER_ID) Long bookerId,
                              @RequestBody CreateBookingRequest request) {
-        return bookingService.create(request.toBuilder().bookerId(bookerId).build());
+        return bookingService.create(bookerId, request);
     }
 
     @PatchMapping("/{bookingId}")

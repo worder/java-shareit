@@ -3,7 +3,6 @@ package ru.practicum.shareit.feature.booking.dto;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
-import lombok.Builder;
 import lombok.ToString;
 import lombok.Value;
 
